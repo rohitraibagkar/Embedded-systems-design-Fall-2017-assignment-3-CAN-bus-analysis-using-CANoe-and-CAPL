@@ -1,0 +1,68 @@
+/*@!Encoding:1252*/
+includes
+{
+  // No need to include library now...
+}
+
+variables
+{
+  message Msg_1 Msg_1; /* Message generation */
+  int R1; /* Variable where random number 1 is generated */
+  int R2; /* Variable where random number 2 is generated */
+  int cnt2 = 0; /* Variable where count 2 is stored */
+  int cnt3 = 0; /* Variable where count 3 is stored */
+  timer tmsg1; /* variable where timer1 message is stored */
+  int P = 1; /* Delay */
+}
+
+on message Msg_2
+{
+  cnt2++;
+  write ("Number of messages received from Node 2 (cnt2) = %d", cnt2);
+  @EvarSwich = 0;
+  @EvarSwich = 1;
+}
+
+on message Msg_3
+{
+  cnt3++;
+  write("Number of messages received from Node 3 (cnt3) = %d", cnt3);
+  @EvarSwich = 0;
+  @EvarSwich = 1;
+}
+
+on timer tmsg1
+{
+  output(Msg_1);
+}
+
+on envVar EvarSwich
+{
+  switch (@EvarSwich)
+  {
+    case 0:
+      Msg_1.byte(0) = 0;
+      Msg_1.byte(1) = 0;
+      output(Msg_1);
+      break;
+      
+    case 1:
+      if (cnt2 < 6 && cnt3 < 6)
+      {
+        R1 = random(25) + 1;
+        R2 = random(2) + 2;
+        Msg_1.byte(0) = R1;
+        Msg_1.byte(1) = R2;
+        @R1 = R1;
+        @R2 = R2;
+        setTimer(tmsg1, P);
+      }
+      break;
+  }
+}
+
+on start
+{
+  write("Assignment 3 : ECE 5620");
+}
+
